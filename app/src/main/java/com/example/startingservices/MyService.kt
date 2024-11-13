@@ -4,27 +4,34 @@ import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import android.util.Log
+import kotlinx.coroutines.*
 
 class MyService : Service() {
-
-    override fun onCreate() {
-        super.onCreate()
-        Log.d("MyService", "Service created")
-    }
+    private var countdownJob = Job()
+    private val serviceScope = CoroutineScope(Dispatchers.Default + countdownJob)
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d("MyService", "Service started")
-        // Run your background task here (e.g., thread or coroutine)
-        return START_STICKY  // Service is restarted if it gets terminated
+        val countdownValue = intent?.getIntExtra("countdown", 10) ?: 10
+
+        serviceScope.launch {
+            for (i in countdownValue downTo 1) {
+                Log.d("MyService", "Countdown: $i")
+                delay(1000)
+            }
+            Log.d("MyService", "Countdown finished")
+        }
+
+        return START_STICKY
     }
 
     override fun onBind(intent: Intent?): IBinder? {
-        // Return null if not binding the service (use for bound services)
         return null
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        countdownJob.cancel()
         Log.d("MyService", "Service destroyed")
     }
 }

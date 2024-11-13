@@ -10,7 +10,15 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.StartingServices"
-        tools:targetApi="31" />
+        android:theme="@style/Theme.StartingServices">
+
+
+        <service
+            android:name="com.example.startingservices.MyService"
+            android:enabled="true"
+            android:exported="false"
+            tools:ignore="MissingClass" />
+
+    </application>
 
 </manifest>
